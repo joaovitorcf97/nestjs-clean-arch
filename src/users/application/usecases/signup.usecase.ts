@@ -2,6 +2,8 @@ import { UserRepository } from '@/users/domain/repositories/user.repository';
 import { BadRequestError } from '../errors/bad-request-error';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 import { HashProvider } from '@/shared/application/providers/hash-provider';
+import { UserOutput } from '../dtos/user-output';
+import { UseCase as DefaultUseCase } from '@/shared/application/usecases/use-case';
 
 export namespace SignupUseCase {
   export type Input = {
@@ -10,21 +12,13 @@ export namespace SignupUseCase {
     password: string;
   };
 
-  export type Output = {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
-    createdAt: Date;
-  };
-
-  export class UseCase {
+  export class UseCase implements DefaultUseCase<Input, UserOutput> {
     constructor(
       private userRepository: UserRepository.Repository,
       private hashProvider: HashProvider,
     ) {}
 
-    async execute(input: Input): Promise<Output> {
+    async execute(input: Input): Promise<UserOutput> {
       const { email, name, password } = input;
 
       if (!email || !name || !password) {
