@@ -1,18 +1,21 @@
 import { UserRepository } from '@/users/domain/repositories/user.repository';
 import { UserOutput } from '../dto/user-output';
 import { UseCase as DefaultUseCase } from '@/shared/application/usecases/use-case';
+import { SearchInput } from '@/shared/application/dto/search-input';
 
-export namespace GetUseCase {
-  export type Input = {
-    id: string;
-  };
+export namespace ListUsersUseCase {
+  export type Input = SearchInput;
+
+  export type Output = void;
 
   export class UseCase implements DefaultUseCase<Input, UserOutput> {
     constructor(private userRepository: UserRepository.Repository) {}
 
-    async execute(input: Input): Promise<UserOutput> {
-      const entity = await this.userRepository.findById(input.id);
-      return entity.toJSON();
+    async execute(input: Input): Promise<Output> {
+      const params = new UserRepository.SearchParams(input);
+      const searchResult = await this.userRepository.search(params);
+
+      return;
     }
   }
 }
